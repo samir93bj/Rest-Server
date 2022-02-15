@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "notenv": "^2.0.3",
+    "package-json": "^7.0.0"
+  }
+}
