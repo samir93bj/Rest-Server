@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "notenv": "^2.0.3",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
     "package-json": "^7.0.0"
   }
 }
