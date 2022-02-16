@@ -1,16 +1,8 @@
 //Requerimos 'dotenv' para tomar los datos de la configuracion del .env
 require('dotenv').config();
+const Server = require('./models/server');
 
-const express = require('express');
-const app = express();
+const server = new Server();
 
-//Almacenamos el puerto en la const port
-const port = process.env.PORT;
+server.listen();
 
-app.get('/', function (req, res) {
-  res.send('Hello World')
-})
-
-app.listen(port,() => {
-    console.log(`Servidor corriendo en: https://localhost:${process.env.PORT}`);
-});
