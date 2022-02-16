@@ -17,4 +17,4 @@ router.get('/', usuariosGet);
 
   router.patch('/', usuariosPatch);
 
-  module.exports = router;
+  module.exports = router; 
