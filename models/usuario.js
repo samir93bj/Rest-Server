@@ -13,7 +13,6 @@ const usuarioSchema = Schema({
     password: {
         type: String,
         required: [true, 'El password es obligatorio'],
-        unique: true
     },
     image: {
         type: String
@@ -24,13 +23,13 @@ const usuarioSchema = Schema({
         emun:['ADMIN_ROLE','USER_ROLE']
     },
     state:{
-        type: bool,
+        type: Boolean,
         default: false
     },
     google:{
-        type: bool,
+        type: Boolean,
         default: false
     }
 });
 
-module.exports = model('Usuario', usuarioSchema );
+module.exports = model('usuario', usuarioSchema );
