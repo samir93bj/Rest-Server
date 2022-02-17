@@ -1,6 +1,8 @@
 const {response} = require('express');
+const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
 
+/*FUNCION GET*/
 const usuariosGet = (req, res = response) => {
 
     //Destructuracion de argumentos 
@@ -12,16 +14,25 @@ const usuariosGet = (req, res = response) => {
         nombre,
         apikey,
         page,
-        limit
+        limit 
     });
 };
 
+/*FUNCION POST*/
 const usuariosPost = async (req, res  = response ) => {
 
-    const body = req.body;
-    //Creamos la instancia del modelo Usuario
-    const usuario = new Usuario(body);
+    const {name, email,password,rol} = req.body;
 
+    //Creamos la instancia del modelo Usuario
+    const usuario = new Usuario({name, email,password,rol});
+
+    //Verificamos si el correo ya existe
+ 
+    //Encriptar password
+    var salt = bcrypt.genSaltSync(10); //Indicamos la cantidad de vueltas para hasshear
+    usuario.password = bcrypt.hashSync(password, salt);
+
+    //Almacenamos el usuario en la base de datos
     await usuario.save();
 
     //Mostramos informacion recibida por la request
@@ -31,6 +42,7 @@ const usuariosPost = async (req, res  = response ) => {
     })
 };
 
+/*FUNCION PUT*/
 const usuariosPut =  (req, res = response ) => {
 
     const { id } = req.params;    
@@ -40,13 +52,17 @@ const usuariosPut =  (req, res = response ) => {
         id
     })
 };
-  
+
+
+/*FUNCION DELETE*/
 const usuariosDelete = (req, res  = response) => { 
     res.json({
         msg: "Delete API - Controller"
     })
 };
 
+
+/*FUNCION PATCH*/
 const usuariosPatch = (req, res  = response) => {
     res.json({
         msg: "Patch API - Controller"
