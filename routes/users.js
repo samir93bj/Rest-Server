@@ -7,7 +7,7 @@ const {usuariosGet ,
       usuariosDelete,
       usuariosPatch} = require('../controllers/users');
 const { validarCampos } = require('../middlewares/validar-campos');
-const { esRoleValido } = require('../helpers/db-validators');
+const { esRoleValido , mailExistente } = require('../helpers/db-validators');
 
 const router = new Router();
 
@@ -19,8 +19,10 @@ router.get('/', usuariosGet);
       check('name','El nombre es obligatorio').not().isEmpty(),
       check('password','El password debe de ser mas de 6 letras').isLength({min:6}),
       check('email', 'El correo no es válido').isEmail(),
+      check('email').custom(mailExistente),
       //Verificamos el rol contra la DB
       check('rol').custom(esRoleValido),
+
       validarCampos
   ], usuariosPost);
 
