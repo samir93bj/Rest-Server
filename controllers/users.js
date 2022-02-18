@@ -2,6 +2,7 @@ const {response} = require('express');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
 
+
 /*FUNCION GET*/
 const usuariosGet = (req, res = response) => {
 
@@ -18,18 +19,26 @@ const usuariosGet = (req, res = response) => {
     });
 };
 
+
 /*FUNCION POST*/
 const usuariosPost = async (req, res  = response ) => {
 
-    const {name, email,password,rol} = req.body;
+    const {name, email ,password ,rol} = req.body;
 
     //Creamos la instancia del modelo Usuario
     const usuario = new Usuario({name, email,password,rol});
 
     //Verificamos si el correo ya existe
- 
+    const existeEmail = await Usuario.findOne({email});
+    
+    if(existeEmail) {
+        return res.status(400).json({
+            msg: 'Ese correo ya esta registrado'
+        });
+    }
+
     //Encriptar password
-    var salt = bcrypt.genSaltSync(10); //Indicamos la cantidad de vueltas para hasshear
+    const salt = bcrypt.genSaltSync(10); //Indicamos la cantidad de vueltas para hasshear
     usuario.password = bcrypt.hashSync(password, salt);
 
     //Almacenamos el usuario en la base de datos
@@ -42,6 +51,7 @@ const usuariosPost = async (req, res  = response ) => {
     })
 };
 
+
 /*FUNCION PUT*/
 const usuariosPut =  (req, res = response ) => {
 
@@ -52,6 +62,7 @@ const usuariosPut =  (req, res = response ) => {
         id
     })
 };
+
 
 
 /*FUNCION DELETE*/
