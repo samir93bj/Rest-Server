@@ -12,7 +12,7 @@ class Server {
         //Conectar a la DB
         this.conectarDB();
         
-        //middleware
+        //middleware 
         this.middleware();
 
         //Rutas de mi aplicacion
