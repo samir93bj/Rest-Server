@@ -92,7 +92,7 @@ const usuariosDelete = async (req, res  = response) => {
     res.json({
        msg : "Usuario eliminado correctamente"
     })
-};
+}; 
 
 
 /*FUNCION PATCH*/
