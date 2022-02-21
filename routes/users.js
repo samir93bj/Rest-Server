@@ -11,20 +11,22 @@ const { esRoleValido , mailExistente, idExistente } = require('../helpers/db-val
 
 const router = new Router();
 
+//Route GET
 router.get('/', usuariosGet);
 
-
-
+//Route PUT
 router.put('/:id',[
     check('id','No es un ID valido').isMongoId(),
     check('id').custom(idExistente),
     check('rol').custom(esRoleValido),
     validarCampos
   ] ,usuariosPut);
+ 
 
-
-//Middleware para end point 
-router.post('/',[
+//Route Post
+router.post('/',
+  //Middleware para end point
+      [
       check('name','El nombre es obligatorio').not().isEmpty(),
       check('password','El password debe de ser mas de 6 letras').isLength({min:6}),
       check('email', 'El correo no es válido').isEmail(),
@@ -35,11 +37,15 @@ router.post('/',[
   ], usuariosPost);
 
 
+//Route Delete
+router.delete('/:id',[
+    check('id','No es un ID valido').isMongoId(),
+    check('id').custom(idExistente),
+    validarCampos
+], usuariosDelete
+);
 
-router.delete('/', usuariosDelete);
-
-
-
+//Route Patach
 router.patch('/', usuariosPatch);
 
 

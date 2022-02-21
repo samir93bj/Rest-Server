@@ -5,21 +5,38 @@ const Usuario = require('../models/usuario');
 
 
 /*FUNCION GET*/
-const usuariosGet = (req, res = response) => {
+const usuariosGet = async (req, res = response) => {
 
     //Destructuracion de argumentos 
-    const {q, nombre = 'No name', apikey, page=1 , limit=10} = req.query;
+    const {limite = 5, desde = 0} = req.query;
+    const queryFilter = {state : true};  
+
+    /*No utikizaremos await en estas dos funciones ya que una no depende de la otra, lo mejor es utilzzar promesas para ejecutar
+    const usuarios = await Usuario.find(queryFilter)
+                    .skip(Number(desde))
+                    .limit(Number(limite));
+    
+    const total = await Usuario.countDocuments(queryFilter);
+    */
+
+    /*Utilizamos el await por que necesitamos obtener primeramente los parametros que vienen por req.query
+    **En caso de no utilizar un await en la Promise.all, ejecutaria todo en simultaneo y avanzaria.
+    **En cambio con el await en la Promise le decimos que las ejecute en simultaneo y devuelva el resultado en simultaneo tambien.
+    ** Y si una de las promesas da error la otra tambien dara error.
+    */
+    const [total, usuarios] = await Promise.all([ //La primer promesa se almacena en 'total', sin importar cual se resuelva primero
+        Usuario.countDocuments(queryFilter),
+        Usuario.find(queryFilter)
+                    .skip(Number(desde))
+                    .limit(Number(limite))
+    ]);
 
     res.json({
-        msg: "get API - Controller",
-        q,
-        nombre,
-        apikey,
-        page,
-        limit 
-    });
-};
+        total,
+        usuarios
+        });
 
+    }
 
 /*FUNCION POST*/
 const usuariosPost = async (req, res  = response ) => {
@@ -58,18 +75,22 @@ const usuariosPut = async (req, res = response ) => {
 
     const usuario = await Usuario.findByIdAndUpdate(id,resto); //findByIdAndUpdate le dice busca ese id, encuentralo y actualizalo
 
-    res.status(201).json({
-        msg: "Put API - Controller",
-        usuario
-    })
+    res.json(usuario);
 };
 
 
-
 /*FUNCION DELETE*/
-const usuariosDelete = (req, res  = response) => { 
+const usuariosDelete = async (req, res  = response) => { 
+
+    const { id } = req.params;
+
+    //Fisicamente lo borramos
+    //const usuario = await Usuario.findByIdAndDelete(id);
+
+    await Usuario.findByIdAndUpdate(id, {state: false});
+
     res.json({
-        msg: "Delete API - Controller"
+       msg : "Usuario eliminado correctamente"
     })
 };
 
