@@ -1,4 +1,5 @@
 // getting-started.js
+require('dotenv').config();
 const mongoose = require('mongoose');
 
 const dbConnection = async() => {
