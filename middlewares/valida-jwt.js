@@ -1,8 +1,9 @@
-const { response } = require('express');
+const { response, request } = require('express');
 const jwt = require('jsonwebtoken');
+const Usuario = require('../models/usuario');
 
 //El middleware se dispara con 3 argumentos req, res, next
-const validarJWT = (req, res = response, next) => {
+const validarJWT = async (req = request, res = response, next) => {
 
     const token = req.header('x-token');
 
@@ -15,18 +16,24 @@ const validarJWT = (req, res = response, next) => {
 
     //Verificamos la autenticidad del token
     try {
-        jwt.verify(token,process.env.SECRETORPRIVATEKEY);
+      /*const payload =  jwt.verify(token,process.env.SECRETORPRIVATEKEY);
+      console.log(payload);*/
 
-        next();
+      const {uid} = jwt.verify(token,process.env.SECRETORPRIVATEKEY);
+
+      //uid = ID de usuario que viaja en el payload del JWT
+      const usuario = await Usuario.findById(uid);
+      req.uid = usuario;
+
+      next();
+
     }catch (err) {
         return res.status(401).json({
             msg: 'Invalid token'
         })
     }
 
-    console.log(token);
-
-    next();
+   
 }
 
 module.exports = {
