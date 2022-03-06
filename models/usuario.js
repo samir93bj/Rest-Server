@@ -20,6 +20,7 @@ const usuarioSchema = Schema({
     rol: {
         type: String,
         required: true,
+        default:'USER_ROLE',
         enum:['ADMIN_ROLE','USER_ROLE']
     },
     state:{
@@ -30,7 +31,7 @@ const usuarioSchema = Schema({
         type: Boolean,
         default: false
     }
-});
+}); 
 
 //Quitamos el __v y password para que retorne solo lo demas
 usuarioSchema.methods.toJSON = function (){
