@@ -9,7 +9,7 @@ const loginController = async(req, res = response) =>{
     const {email ='', password=''} = req.body;
 
     try {
-        
+
         const usuario = await Usuario.findOne({email});
 
         //Verificar si el mail existe
@@ -26,11 +26,11 @@ const loginController = async(req, res = response) =>{
             });
         }
 
-        
+
         //Verificar la contraseña
         const validPassword = bcrypt.compareSync(password, usuario.password);
 
-         //Si el usuario esta activo
+         //Si lla constraseña es incorrecta
          if(!validPassword){
             return res.status(404).json({
                 msg: 'Usuario / Password no son correctos'
@@ -40,7 +40,7 @@ const loginController = async(req, res = response) =>{
         //Generar el JWT
         const token = await generarJWT(usuario.id);
 
-        
+
     res.status(200).json({
         msg: 'login ok',
         usuario,
@@ -69,11 +69,11 @@ const googleSignin = async(req, res = response) => {
 
         //En caso de que no este registrado
         if(!usuario){
-            
-            //Crear Usuario 
+
+            //Crear Usuario
             const data = {
                 name,
-                email, 
+                email,
                 password : ':p',
                 image,
                 state: true,
@@ -110,10 +110,10 @@ const googleSignin = async(req, res = response) => {
         console.log(error);
     }
 
-    
+
 }
 
 module.exports = {
     loginController,
     googleSignin
-} 
+}

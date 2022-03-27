@@ -1,7 +1,7 @@
 const { response } = require("express");
 
 const esAdminRole = (req, res = response, next) => {
-    console.log(req.uid);
+   // console.log(req.uid);
 
     if( !req.uid ){
 

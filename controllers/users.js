@@ -58,7 +58,7 @@ const usuariosPost = async (req, res  = response ) => {
         usuario
     })
 };
-
+ 
 
 /*FUNCION PUT*/
 const usuariosPut = async (req, res = response ) => {
