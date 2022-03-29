@@ -36,10 +36,10 @@ const ProductSchema = Schema({
 });
 
 //Quitamos el __v  para que retorne solo lo demas
-CategorySchema.methods.toJSON = function (){
-    const { __v,_id, ...category } = this.toObject();
-    category.uid = _id;
-    return category;
+ProductSchema.methods.toJSON = function (){
+    const { __v,_id, ...product } = this.toObject();
+    product.uid = _id;
+    return product;
 }
 
 
