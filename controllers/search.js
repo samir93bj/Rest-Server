@@ -2,6 +2,8 @@ const {response} = require('express');
 const {ObjectId} = require('mongoose').Types;
 
 const  usuario  = require('../models/usuario');
+const Category = require('../models/category');
+const Product = require('../models/product');
 
 const coleccionesPermitidas = [
     'users',
@@ -35,7 +37,67 @@ const getUser = async (termino = '' , res = response) => {
         results:  (users) ? [ users ] : []
     });
 
-}   
+} 
+
+//GET CATEGORIES
+const getCategories = async(termino = '', res = response) =>{
+
+    const isMongoId = ObjectId.isValid(termino); // TRUE, FALSE
+
+    if(isMongoId){
+        const category = await Category.findById(termino);
+        const products = await Product.find({category: termino});
+
+        return res.status(200).json({
+            msg: 'category',
+            category,
+            products
+        }) 
+       }
+
+    const regex = new RegExp(termino, 'i'); //Utilizamos una expresion regular para insensivilar la busqueda
+
+    //BUSCAMOS CATEGORIES
+    const categories = await Category.find({ 
+        $or: [{ name: regex}, {status: true}]
+    }).populate('user','name');
+
+
+    return res.status(200).json({ 
+        results : (categories) ? [ categories ] : []
+     });
+
+
+}
+
+
+//GET PRODUCTS
+const getProducts = async(termino ='', res = response) => {
+    
+    const isMongoId = ObjectId.isValid(termino); // TRUE, FALSE
+
+     if(isMongoId){
+        const product = await Product.findById(termino).populate('category','name').populate('user','name');
+
+       return res.status(200).json({
+            msg: 'product',
+            product
+        });
+     }
+
+     const regex =new RegExp(termino,'i');
+     
+     //BUSCAMOS PRODUCTOS
+     const products = await Product.find({ 
+         $or: [{name : regex}, {description : regex}],
+         $and: [{status: true}]
+     }).populate('category','name').populate('user','name');
+
+     return res.status(200).json({
+            results:  (products) ? [ products ] : []
+     });
+}
+
 
 const search = async (req, res = response) => {
 
@@ -53,11 +115,11 @@ const search = async (req, res = response) => {
         break;
 
         case 'categories':
-
+            getCategories( termino, res);
         break;
 
         case 'products':
-
+            getProducts( termino, res);
         break;
 
         default:
