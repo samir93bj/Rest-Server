@@ -1,33 +1,81 @@
-const path = require('path');
 const { response } = require('express');
+const { subirArchivo }= require('../helpers/upload-file');
 
-const uploadFile = (req, res = response) => {
+const Product = require('../models/product');
+const User = require('../models/usuario');
 
-    if (!req.files || Object.keys(req.files).length === 0 || !req.files.file ) {
-      res.status(400).json({
-          msg: 'No files were uploaded.'
-        });
-      return;
+//POST FILES
+const uploadFile = async (req, res = response) => {  
+
+    try {
+
+      //ENVIAMOS A LA FUNCION SUBIRARCHIVO LO QUE RECIBIMOS POR REQUEST Y LAS EXTENSIONES VALIDAS
+      //const name = await subirArchivo(req.files,['txt','md','pdf'],'textos'); //textos es el nombre de la carpeta donde se guardaran los archivos
+      const name = await subirArchivo(req.files, undefined ,'imgs');
+
+      res.status(200).json({
+        nameFile: name
+      })
+
+    } catch(msg){
+      res.status(400).json({msg});
     }
-    
-        const {file} = req.files;
-    
-        const uploadPath =path.join( __dirname , '../uploads/' + file.name);
-    
-        file.mv(uploadPath, (err)=> {
-        if (err) {
-            return res.status(500).json({
-                err
-            });
-        }
-    
-        res.json({
-            msg :'File uploaded to ' + uploadPath
-            });
-        });
-
+  
 };
 
+//PUT FILES
+const uploadFilePut = async (req, res = response) => {
+
+  const {id , collection} = req.params;
+  let modelo;
+
+  switch(collection){
+
+    //COLLECTION USER 
+    case 'users':
+      modelo = await User.findById(id);
+
+      if (!modelo){
+        return res.status(404).json({
+          msg: `Usuario con id ${id} no encontrado`
+        })
+      }
+
+    break;
+
+    //COLLECTION PRODUCT 
+    case 'products':
+      modelo = await Product.findById(id);
+
+      if (!modelo){
+        return res.status(404).json({
+          msg: `Usuario con id ${id} no encontrado`
+        })
+      }
+    break;
+
+    //MSG DEFAULT ERRORS
+    default:
+        return res.status(500).json({
+          msg: 'Se nos olvido de validar esto'
+        });
+  }
+
+  //CREACION DE LA CARPETA DONDE SE ALMACENARA EL ARCHIVO ENVIADO
+  const name = await subirArchivo(req.files, undefined ,collection);
+  modelo.img = name;
+
+  //SALVAMOS EL MODELO CON EL NOMBRE DE LA IMAGEN
+  await modelo.save(); 
+
+  res.status(200).json({
+    id,
+    collection,
+    modelo
+  });
+}
+
 module.exports = {
-    uploadFile
+    uploadFile,
+    uploadFilePut
 }

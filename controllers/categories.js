@@ -18,7 +18,7 @@ const getCategories = async (req, res = response) => {
             total,
             limit,
             desde,
-            categories 
+            categories
         });
 }
 
@@ -28,7 +28,7 @@ const getCategory = async (req, res = response) => {
     const { id } = req.params;
     const category = await Category.findById(id).populate('user').find({status : true});
 
-    if ( category == 0){ 
+    if ( category == 0){
        return res.status(404).json({
             msg: 'La categoria no existe o esta deshabilitada'
         });
@@ -46,6 +46,7 @@ const postCategory = async (req, res = response) => {
     const name = req.body.name.toUpperCase();
 
     const usuario = req.uid;
+
     const data ={
         name,
         user : usuario._id

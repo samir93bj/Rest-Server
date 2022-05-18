@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose'); 
+const { Schema, model } = require('mongoose');
 
 const CategorySchema = Schema({
     name:{
@@ -18,7 +18,7 @@ const CategorySchema = Schema({
      }
 });
 
-//Quitamos el __v y password para que retorne solo lo demas
+//Quitamos el __v  para que retorne solo lo demas
 CategorySchema.methods.toJSON = function (){
     const { __v,_id, ...category } = this.toObject();
     category.uid = _id;

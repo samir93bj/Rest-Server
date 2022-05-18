@@ -72,6 +72,15 @@ const esRoleValido =   async ( rol = '') => {
       }
     }
 
+  //verificamos ID de files
+  const allowedColecction = async (collection = '', collections = []) => {
+
+    if (!collections.includes(collection)){
+      throw new Error(`La coleccion: ${collection} no existe. Las colecciones permitidas son: ${collections}`);
+    }
+
+  }
+
   module.exports = {
     esRoleValido,
     mailExistente,
@@ -79,5 +88,6 @@ const esRoleValido =   async ( rol = '') => {
     idCategoryExist,
     nameCategoryExist,
     idProductExist,
-    nameProductExist
+    nameProductExist,
+    allowedColecction
   }

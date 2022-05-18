@@ -12,6 +12,39 @@ const coleccionesPermitidas = [
     'products'
 ];
 
+
+const search = async (req, res = response) => {
+
+    const {collection, termino} = req.params;
+
+    if(!coleccionesPermitidas.includes(collection)){
+        return res.status(400).json({ 
+            msg : `Las colecciones permitidas son: ${coleccionesPermitidas}`
+        });
+    }
+
+    switch(collection){
+        case 'users':
+            getUser( termino, res);
+        break;
+
+        case 'categories':
+            getCategories( termino, res);
+        break;
+
+        case 'products':
+            getProducts( termino, res);
+        break;
+
+        default:
+            res.status(500).json({
+                msg: 'Se le olvido hacer esta busqueda'
+            })
+
+    }
+
+};
+
 //GET USER
 const getUser = async (termino = '' , res = response) => {
 
@@ -69,7 +102,7 @@ const getCategories = async(termino = '', res = response) =>{
 
 
 }
-
+ 
 
 //GET PRODUCTS
 const getProducts = async(termino ='', res = response) => {
@@ -99,37 +132,6 @@ const getProducts = async(termino ='', res = response) => {
 }
 
 
-const search = async (req, res = response) => {
-
-    const {collection, termino} = req.params;
-
-    if(!coleccionesPermitidas.includes(collection)){
-        return res.status(400).json({ 
-            msg : `Las colecciones permitidas son: ${coleccionesPermitidas}`
-        });
-    }
-
-    switch(collection){
-        case 'users':
-            getUser( termino, res);
-        break;
-
-        case 'categories':
-            getCategories( termino, res);
-        break;
-
-        case 'products':
-            getProducts( termino, res);
-        break;
-
-        default:
-            res.status(500).json({
-                msg: 'Se le olvido hacer esta busqueda'
-            })
-
-    }
-
-};
 
 module.exports = {
     search
