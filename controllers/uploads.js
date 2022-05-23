@@ -3,6 +3,10 @@ const { response } = require('express');
 const path = require('path');
 const fs = require('fs');
 
+// Require the Cloudinary library
+const cloudinary = require('cloudinary').v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
+
 const { subirArchivo }= require('../helpers/upload-file');
 
 const Product = require('../models/product');
@@ -90,6 +94,62 @@ const uploadFilePut = async (req, res = response) => {
   });
 }
 
+//PUT FILES Cloudinary
+const uploadFilePutCloudinary = async (req, res = response) => {
+
+  const {id , collection} = req.params;
+  let modelo;
+
+  switch(collection){
+
+    //COLLECTION USER 
+    case 'users':
+      modelo = await User.findById(id);
+
+      if (!modelo){
+        return res.status(404).json({
+          msg: `Usuario con id ${id} no encontrado`
+        })
+      }
+
+    break;
+
+    //COLLECTION PRODUCT 
+    case 'products':
+      modelo = await Product.findById(id);
+
+      if (!modelo){
+        return res.status(404).json({
+          msg: `Usuario con id ${id} no encontrado`
+        })
+      }
+    break;
+
+    //MSG DEFAULT ERRORS
+    default:
+        return res.status(500).json({
+          msg: 'Se nos olvido de validar esto'
+        });
+  }
+ 
+    //Limpiar imagenes previas
+    if( modelo.img ){
+        const nombreArr = modelo.img.split('/');
+        const nombre = nombreArr[nombreArr.length - 1];
+        const [public_id] = nombre.split('.');
+        cloudinary.uploader.destroy( public_id );
+    }; 
+
+  const { tempFilePath } = req.files.file;
+  const { secure_url } = await cloudinary.uploader.upload( tempFilePath );
+
+  modelo.img = secure_url;
+
+  await modelo.save();
+
+  res.json( modelo );
+}
+
 //GET IMG CORRESPONDIENTE
 const getFile = async (req, res= response ) => {
 
@@ -149,5 +209,6 @@ const getFile = async (req, res= response ) => {
 module.exports = {
     uploadFile,
     uploadFilePut,
-    getFile
+    getFile,
+    uploadFilePutCloudinary
 }

@@ -4,7 +4,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 
 const {allowedColecction} = require('../helpers/db-validators');
 
-const {uploadFile, uploadFilePut, getFile} = require('../controllers/uploads');
+const {uploadFile, uploadFilePut, getFile,uploadFilePutCloudinary} = require('../controllers/uploads');
 
 const { validarArchivoSubir } = require('../middlewares/validarArchivo');
 
@@ -22,7 +22,7 @@ router.put('/:collection/:id',[
     check('collection').custom(c => allowedColecction(c, ['users','products'])),
     validarCampos
     ],
-    uploadFilePut);
+    uploadFilePutCloudinary);
 
 router.get('/:collection/:id',
 [
