@@ -28,7 +28,7 @@ const subirArchivo = (files, extensionesValidas = ['png', 'jpg', 'gif', 'jpeg'],
         });
         
     });
-
+ 
    
 
 }

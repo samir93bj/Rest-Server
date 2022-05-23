@@ -1,4 +1,8 @@
 const { response } = require('express');
+
+const path = require('path');
+const fs = require('fs');
+
 const { subirArchivo }= require('../helpers/upload-file');
 
 const Product = require('../models/product');
@@ -19,7 +23,7 @@ const uploadFile = async (req, res = response) => {
 
     } catch(msg){
       res.status(400).json({msg});
-    }
+    } 
   
 };
 
@@ -59,6 +63,17 @@ const uploadFilePut = async (req, res = response) => {
         return res.status(500).json({
           msg: 'Se nos olvido de validar esto'
         });
+  }
+ 
+  //Limpiar imagenes previas
+  if( modelo.img ){
+    //Hay q boorar la imagen del server
+    const pathImagen = path.join(__dirname,'../uploads', collection, modelo.img);
+
+    //Si la imagen existe la va a borrar
+    if( fs.existsSync(pathImagen)){
+      fs.unlinkSync(pathImagen);
+    }
   }
 
   //CREACION DE LA CARPETA DONDE SE ALMACENARA EL ARCHIVO ENVIADO
