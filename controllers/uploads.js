@@ -90,7 +90,64 @@ const uploadFilePut = async (req, res = response) => {
   });
 }
 
+//GET IMG CORRESPONDIENTE
+const getFile = async (req, res= response ) => {
+
+  const {id , collection} = req.params;
+  let modelo;
+
+  switch(collection){
+
+    //COLLECTION USER 
+    case 'users':
+      modelo = await User.findById(id);
+
+      if (!modelo){
+        return res.status(404).json({
+          msg: `Usuario con id ${id} no encontrado`
+        })
+      }
+
+    break;
+
+    //COLLECTION PRODUCT 
+    case 'products':
+      modelo = await Product.findById(id);
+
+      if (!modelo){
+        return res.status(404).json({
+          msg: `Usuario con id ${id} no encontrado`
+        })
+      }
+    break;
+
+    //MSG DEFAULT ERRORS
+    default:
+        return res.status(500).json({
+          msg: 'Se nos olvido de validar esto'
+        });
+  }
+
+
+   //Limpiar imagenes previas
+   if( modelo.img ){
+    //Hay q boorar la imagen del server
+    const pathImagen = path.join(__dirname,'../uploads', collection, modelo.img);
+
+    //Si la imagen existe la va a borrar
+    if( fs.existsSync(pathImagen)){
+      return res.sendFile(pathImagen);
+    }
+  }
+
+  const pathImagen = path.join(__dirname,'../assets/no-imagen.jpg');
+  res.sendFile(pathImagen);
+  //res.json({msg : 'Falta el placeholder'});
+
+}
+
 module.exports = {
     uploadFile,
-    uploadFilePut
+    uploadFilePut,
+    getFile
 }

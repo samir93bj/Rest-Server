@@ -4,7 +4,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 
 const {allowedColecction} = require('../helpers/db-validators');
 
-const {uploadFile, uploadFilePut} = require('../controllers/uploads');
+const {uploadFile, uploadFilePut, getFile} = require('../controllers/uploads');
 
 const { validarArchivoSubir } = require('../middlewares/validarArchivo');
 
@@ -17,11 +17,20 @@ validarArchivoSubir,
 
 router.put('/:collection/:id',[
     validarArchivoSubir,
-    check('id','El id ingresado no es correcto').isMongoId(),
     check('id', 'El id es obligatorio').not().isEmpty(),
+    check('id','El id ingresado no es correcto').isMongoId(),
     check('collection').custom(c => allowedColecction(c, ['users','products'])),
     validarCampos
     ],
     uploadFilePut);
+
+router.get('/:collection/:id',
+[
+    check('id', 'El id es obligatorio').not().isEmpty(),
+    check('id','El id ingresado no es correcto').isMongoId(),
+    check('collection').custom(c => allowedColecction(c, ['users','products'])),
+    validarCampos
+],
+    getFile);
 
 module.exports = router;  
