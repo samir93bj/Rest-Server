@@ -58,7 +58,7 @@ const usuariosPost = async (req, res  = response ) => {
         usuario
     })
 };
-
+ 
 
 /*FUNCION PUT*/
 const usuariosPut = async (req, res = response ) => {
@@ -82,15 +82,22 @@ const usuariosPut = async (req, res = response ) => {
 /*FUNCION DELETE*/
 const usuariosDelete = async (req, res  = response) => { 
 
-    const { id } = req.params;
+    const { id } = req.params; //id usuario a borrar
 
     //Fisicamente lo borramos
     //const usuario = await Usuario.findByIdAndDelete(id);
 
-    await Usuario.findByIdAndUpdate(id, {state: false});
+    /*
+    const uid = req.uid; //uid del usuario que devuelve el JWT
+    const usuarioAuth = await Usuario.findOne({"_id": uid});
+*/
+    const usuario = await Usuario.findByIdAndUpdate(id, {state: false});
+    const usuarioAuth = req.uid;
 
     res.json({
-       msg : "Usuario eliminado correctamente"
+       msg : "Usuario eliminado correctamente",
+       usuario,
+       usuarioAuth
     })
 }; 
 
